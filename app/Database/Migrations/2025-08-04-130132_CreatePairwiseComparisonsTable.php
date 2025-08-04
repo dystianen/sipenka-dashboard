@@ -54,8 +54,8 @@ class CreatePairwiseComparisonsTable extends Migration
 
         $this->forge->addKey('comparison_id', true);
         $this->forge->addForeignKey('period_id', 'periods', 'period_id', 'CASCADE', 'CASCADE');
-        $this->forge->addForeignKey('criteria_id_1', 'criteria', 'criteria_id', 'CASCADE', 'CASCADE');
-        $this->forge->addForeignKey('criteria_id_2', 'criteria', 'criteria_id', 'CASCADE', 'CASCADE');
+        $this->forge->addForeignKey('criteria_id_1', 'question_categories', 'category_id', 'CASCADE', 'CASCADE');
+        $this->forge->addForeignKey('criteria_id_2', 'question_categories', 'category_id', 'CASCADE', 'CASCADE');
         $this->forge->addForeignKey('created_by', 'users', 'user_id', 'CASCADE', 'CASCADE');
         $this->forge->createTable('pairwise_comparisons');
     }

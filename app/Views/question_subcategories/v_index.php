@@ -3,7 +3,7 @@
 <div class="container-fluid card">
   <div class="card-header mb-4 pb-0 d-flex align-items-center justify-content-between">
     <h4>Criteria List</h4>
-    <a href="<?= base_url('/criteria/form') ?>" class="btn btn-primary btn-sm">Add Criteria</a>
+    <a href="<?= base_url('/criterias/form') ?>" class="btn btn-primary btn-sm">Add criteria</a>
   </div>
 
   <div class="card-body px-0 pt-0 pb-2">
@@ -12,7 +12,10 @@
         <thead>
           <tr>
             <th>No</th>
+            <th>Code</th>
             <th>Name</th>
+            <th>Type</th>
+            <th>Weight</th>
             <th>Description</th>
             <th>Actions</th>
           </tr>
@@ -28,11 +31,14 @@
             <?php foreach ($criterias as $criteria): ?>
               <tr>
                 <td><?= $startIndex++ ?></td>
+                <td><?= $criteria['code'] ?></td>
                 <td><?= $criteria['name'] ?></td>
+                <td><?= $criteria['type'] ?></td>
+                <td><?= $criteria['weight'] ?></td>
                 <td><?= $criteria['description'] ?></td>
                 <td>
-                  <a href="<?= base_url('/criteria/form?id=' . $criteria['category_id']) ?>" class="btn btn-sm btn-warning"><i class="fa fa-edit"></i></a>
-                  <form action="<?= base_url('/criteria/delete/' . $criteria['category_id']) ?>" method="post" style="display:inline-block;">
+                  <a href="<?= base_url('/criteria/form?id=' . $criteria['criteria_id']) ?>" class="btn btn-sm btn-warning"><i class="fa fa-edit"></i></a>
+                  <form action="<?= base_url('/criteria/delete/' . $criteria['criteria_id']) ?>" method="post" style="display:inline-block;">
                     <?= csrf_field() ?>
                     <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')"><i class="fa fa-trash"></i></button>
                   </form>

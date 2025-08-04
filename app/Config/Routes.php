@@ -36,7 +36,7 @@ $routes->group('users', ['filter' => 'authGuard'], function ($routes) {
 $routes->group('criteria', ['filter' => 'authGuard'], function ($routes) {
   $routes->get('', 'CriteriaController::index');
   $routes->get('form', 'CriteriaController::form');
-  $routes->post('save', 'CriteriaController::save');
+  $routes->post('save', 'CriteriaController::saveAll');
   $routes->post('delete/(:num)', 'CriteriaController::delete/$1');
 });
 

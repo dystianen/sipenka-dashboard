@@ -4,14 +4,18 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use App\Models\CriteriaModel;
+use App\Models\QuestionModel;
+use App\Models\QuestionSubcategoryModel;
 
 class CriteriaController extends BaseController
 {
-    protected $criteriaModel;
+    protected $questionCategoryModel, $questionSubcategoryModel, $questionModel;
 
     public function __construct()
     {
-        $this->criteriaModel = new CriteriaModel();
+        $this->questionCategoryModel = new CriteriaModel();
+        $this->questionSubcategoryModel = new QuestionSubcategoryModel();
+        $this->questionModel = new QuestionModel();
     }
 
     public function index()
@@ -20,9 +24,9 @@ class CriteriaController extends BaseController
         $totalLimit = 10;
         $offset = ($currentPage - 1) * $totalLimit;
 
-        $criterias = $this->criteriaModel->findAll($totalLimit, $offset);
+        $criterias = $this->questionCategoryModel->findAll($totalLimit, $offset);
 
-        $totalRows = $this->criteriaModel->countAllResults();
+        $totalRows = $this->questionCategoryModel->countAllResults();
 
         $data = [
             'criterias' => $criterias,
@@ -43,7 +47,7 @@ class CriteriaController extends BaseController
         $data = [];
 
         if ($id) {
-            $teacher = $this->criteriaModel
+            $teacher = $this->questionCategoryModel
                 ->find($id);
 
             if (!$teacher) {
@@ -56,44 +60,58 @@ class CriteriaController extends BaseController
         return view('criteria/v_form', $data);
     }
 
-    public function save()
+    public function saveAll()
     {
-        $id = $this->request->getVar('id');
+        $categories = $this->request->getPost('categories');
 
-        $rules = [
-            'code' => 'required',
-            'name' => 'required',
-            'type' => 'required',
-            'weight' => 'required',
-            'description' => 'required',
-        ];
-
-        if (!$this->validate($rules)) {
-            return redirect()->back()->withInput()->with('failed', 'Please check your input.');
-        };
-
-        $data = [
-            'code' => $this->request->getPost('code'),
-            'name' => $this->request->getPost('name'),
-            'type' => $this->request->getPost('type'),
-            'weight' => $this->request->getPost('weight'),
-            'description' => $this->request->getPost('description'),
-        ];
-
-        if ($id) {
-            $this->criteriaModel->update($id, $data);
-            $message = 'Criteria updated successfully!';
-        } else {
-            $this->criteriaModel->insert($data);
-            $message = 'Criteria created successfully!';
+        if (!$categories || !is_array($categories)) {
+            return redirect()->back()->withInput()->with('failed', 'No data submitted.');
         }
 
-        return redirect()->to('/criteria')->with('success', $message);
+        foreach ($categories as $category) {
+            // 1. Simpan category
+            $categoryData = [
+                'name' => $category['name'],
+                'description' => $category['description'] ?? null,
+            ];
+
+            $categoryId = $this->questionCategoryModel->insert($categoryData, true); // true = return inserted ID
+
+            // 2. Cek dan simpan subcategories jika ada
+            if (isset($category['subcategories']) && is_array($category['subcategories'])) {
+                foreach ($category['subcategories'] as $subcategory) {
+                    $subData = [
+                        'category_id' => $categoryId,
+                        'name' => $subcategory['name'],
+                        'description' => $subcategory['description'] ?? null,
+                    ];
+
+                    $subcategoryId = $this->questionSubcategoryModel->insert($subData, true);
+
+                    // 3. Simpan questions jika ada
+                    if (isset($subcategory['questions']) && is_array($subcategory['questions'])) {
+                        foreach ($subcategory['questions'] as $question) {
+                            $questionData = [
+                                'category_id' => $categoryId,
+                                'subcategory_id' => $subcategoryId,
+                                'question_text' => $question['text'],
+                                'scoring_type' => 'scale_1_5', // default, bisa disesuaikan
+                                'weight' => 1.0, // default, bisa diatur jika ditambahkan ke form
+                            ];
+
+                            $this->questionModel->insert($questionData);
+                        }
+                    }
+                }
+            }
+        }
+
+        return redirect()->to('/questions')->with('success', 'All questions saved successfully!');
     }
 
     public function delete($id)
     {
-        $this->criteriaModel->delete($id);
+        $this->questionCategoryModel->delete($id);
         return redirect()->to('/criteria')->with('success', 'Data kriteria berhasil dihapus.');
     }
 }

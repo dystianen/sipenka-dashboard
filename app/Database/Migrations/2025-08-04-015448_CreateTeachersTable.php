@@ -21,11 +21,6 @@ class CreateTeachersTable extends Migration
                 'unsigned' => true,
                 'null' => true
             ],
-            'nip' => [
-                'type' => 'VARCHAR',
-                'constraint' => 50,
-                'unique' => true
-            ],
             'education' => [
                 'type' => 'VARCHAR',
                 'constraint' => 50
