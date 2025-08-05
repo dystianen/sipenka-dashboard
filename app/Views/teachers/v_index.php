@@ -13,7 +13,6 @@
           <tr>
             <th>No</th>
             <th>Name</th>
-            <th>NIP</th>
             <th>Education</th>
             <th>Major</th>
             <th>Institution</th>
@@ -34,7 +33,6 @@
               <tr>
                 <td><?= $startIndex++ ?></td>
                 <td><?= esc($teacher['name']) ?></td>
-                <td><?= esc($teacher['nip']) ?></td>
                 <td><?= esc($teacher['education']) ?></td>
                 <td><?= esc($teacher['major']) ?></td>
                 <td><?= esc($teacher['institution']) ?></td>

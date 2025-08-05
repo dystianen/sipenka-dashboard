@@ -134,11 +134,11 @@
           </li>
 
           <li class="nav-item">
-            <a class="nav-link <?= $currentURI === 'performance-assessment' ? 'active' : '' ?>" href="/performance-assessment">
+            <a class="nav-link <?= $currentURI === 'performance-assesment' ? 'active' : '' ?>" href="/performance-assesment">
               <div class="me-2 d-flex align-items-center justify-content-center">
                 <i class="fas fa-user-tag"></i>
               </div>
-              <span class="nav-link-text ms-1">Performance Assessment</span>
+              <span class="nav-link-text ms-1">Performance Assesment</span>
             </a>
           </li>
 

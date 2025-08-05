@@ -92,7 +92,6 @@
           <label>Scoring Type</label>
           <select name="categories[${catIndex}][subcategories][${subIndex}][questions][${qIndex}][scoring_type]" class="form-control" required>
             <option value="">-- Select Type --</option>
-            <option value="scale_1_5">Scale 1–5</option>
             <option value="scale_1_3">Scale 1–3</option>
             <option value="1_0">Yes / No (1 = Yes, 0 = No)</option>
           </select>

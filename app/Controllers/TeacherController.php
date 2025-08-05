@@ -80,7 +80,6 @@ class TeacherController extends BaseController
         }
 
         $teacherData = [
-            'nip'           => $request->getPost('nip'),
             'education'     => $request->getPost('education'),
             'major'         => $request->getPost('major'),
             'institution'   => $request->getPost('institution'),

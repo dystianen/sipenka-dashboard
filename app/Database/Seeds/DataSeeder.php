@@ -9,7 +9,8 @@ class DataSeeder extends Seeder
     public function run()
     {
         $this->call('UserSeeder');
-        $this->call('CriteriaSeeder');
         $this->call('PeriodSeeder');
+        $this->call('QuestionsSeeder');
+        $this->call('Questions2Seeder');
     }
 }

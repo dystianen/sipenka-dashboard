@@ -1,6 +1,6 @@
 <?= $this->extend('layouts/l_dashboard') ?>
 <?= $this->section('content') ?>
-<div class="container-fluid card py-4">
+<div class="container-fluid card">
   <div class="card-header pb-0">
     <h4><?= isset($teacher) ? 'Edit Teacher' : 'Add Teacher' ?></h4>
   </div>
@@ -15,12 +15,6 @@
           <label for="name">Name</label>
           <input type="text" class="form-control" name="name" id="name" required
             value="<?= old('name', $teacher['name'] ?? '') ?>" placeholder="Enter full name">
-        </div>
-
-        <div class="col-md-6 mb-3">
-          <label for="nip">NIP</label>
-          <input type="text" class="form-control" name="nip" id="nip" required
-            value="<?= old('nip', $teacher['nip'] ?? '') ?>" placeholder="Enter NIP">
         </div>
 
         <div class="col-md-6 mb-3">
