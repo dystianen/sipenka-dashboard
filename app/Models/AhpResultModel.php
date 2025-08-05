@@ -6,13 +6,13 @@ use CodeIgniter\Model;
 
 class AhpResultModel extends Model
 {
-    protected $table            = 'ahpresults';
+    protected $table            = 'ahp_results';
     protected $primaryKey       = 'ahp_result_id';
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
     protected $useSoftDeletes   = true;
     protected $protectFields    = true;
-    protected $allowedFields    = ['calculated_by', 'weights', 'cr_value', 'is_valid', 'created_at', 'updated_at', 'deleted_at'];
+    protected $allowedFields    = ['period_id', 'calculated_by', 'weights', 'cr_value', 'is_valid', 'created_at', 'updated_at', 'deleted_at'];
 
     protected bool $allowEmptyInserts = false;
 

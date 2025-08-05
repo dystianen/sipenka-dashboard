@@ -31,6 +31,7 @@ class PeriodSeeder extends Seeder
                 'name'       => 'Semester Ganjil 2025',
                 'start_date' => '2024-07-01',
                 'end_date'   => '2024-12-31',
+                'is_active'  => 1,
                 'created_at' => date('Y-m-d H:i:s'),
             ],
         ];

@@ -12,14 +12,20 @@
       <div class="container-fluid px-0">
         <div class="row g-2">
           <?php foreach ($criterias as $t): ?>
+            <?php
+            $isEvaluated = in_array($t['category_id'], $evaluatedCriterias ?? []);
+            $cardClass = $isEvaluated ? 'bg-success text-white' : 'cursor-pointer';
+            $clickAttr = $isEvaluated ? '' : "onclick=\"handleDetail({$t['category_id']})\"";
+            ?>
             <div class="col-3">
-              <div class="card cursor-pointer" onclick="handleDetail(<?= $t['category_id'] ?>)">
+              <div class="card <?= $cardClass ?>" <?= $clickAttr ?>>
                 <div class="card-body">
                   <?= $t['name'] ?>
                 </div>
               </div>
             </div>
           <?php endforeach; ?>
+
         </div>
       </div>
     </div>

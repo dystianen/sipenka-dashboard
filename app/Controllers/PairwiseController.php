@@ -26,9 +26,9 @@ class PairwiseController extends BaseController
         for ($i = 0; $i < count($criteria); $i++) {
             for ($j = $i + 1; $j < count($criteria); $j++) {
                 $pairs[] = [
-                    'criteria1_id' => $criteria[$i]['criteria_id'],
+                    'criteria1_id' => $criteria[$i]['category_id'],
                     'criteria1_name' => $criteria[$i]['name'],
-                    'criteria2_id' => $criteria[$j]['criteria_id'],
+                    'criteria2_id' => $criteria[$j]['category_id'],
                     'criteria2_name' => $criteria[$j]['name'],
                 ];
             }
@@ -53,17 +53,25 @@ class PairwiseController extends BaseController
             return redirect()->back()->with('error', 'Data tidak lengkap.');
         }
 
+        $period = $this->periodModel
+            ->where('is_active', 1)
+            ->first();
+        $activePeriodId = $period['period_id'];
+
         // dd($period_id, $comparisons);
         foreach ($comparisons as $item) {
             $value = is_numeric($item['value']) ? floatval($item['value']) : eval("return " . $item['value'] . ";");
 
-            $model->insert([
-                'period_id'        => $period_id,
+            $data = [
+                'period_id'        => $activePeriodId,
                 'criteria_id_1'    => $item['criteria1_id'],
                 'criteria_id_2'    => $item['criteria2_id'],
                 'comparison_value' => $value,
                 'created_by'       => session()->get('user_id') ?? 1,
-            ]);
+            ];
+            // dd($data);
+
+            $model->insert($data);
         }
 
         return redirect()->to('/pairwise-comparison')->with('success', 'Data pairwise berhasil disimpan.');

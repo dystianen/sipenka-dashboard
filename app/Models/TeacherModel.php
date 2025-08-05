@@ -47,4 +47,23 @@ class TeacherModel extends Model
             ->limit($limit, $offset)
             ->findAll();
     }
+
+    // public function getAllWithScoreStatus($limit, $offset, $periodId, $totalCategories)
+    // {
+    //     $teachers = $this->getAllWithUser($limit, $offset);
+    //     $scoreModel = new \App\Models\TeacherQuestionScoreModel();
+
+    //     foreach ($teachers as &$teacher) {
+    //         $scoredCategories = $scoreModel
+    //             ->select('DISTINCT(q.category_id)')
+    //             ->join('questions q', 'q.question_id = teacher_question_scores.question_id')
+    //             ->where('teacher_question_scores.teacher_id', $teacher['teacher_id'])
+    //             ->where('teacher_question_scores.period_id', $periodId)
+    //             ->countAllResults(false);
+
+    //         $teacher['is_fully_scored'] = $scoredCategories == $totalCategories;
+    //     }
+
+    //     return $teachers;
+    // }
 }

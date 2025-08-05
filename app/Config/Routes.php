@@ -49,9 +49,13 @@ $routes->group('pairwise-comparison', ['filter' => 'authGuard'], function ($rout
 
 $routes->group('performance-assesment', ['filter' => 'authGuard'], function ($routes) {
   $routes->get('', 'PerformanceController::index');
-  $routes->get('(:num)', 'PerformanceController::pageCriteria');
+  $routes->get('(:num)', 'PerformanceController::pageCriteria/$1');
   $routes->get('(:num)/(:num)', 'PerformanceController::pageEvaluation/$1/$2');
   $routes->get('form', 'PerformanceController::form');
   $routes->post('save', 'PerformanceController::save');
   $routes->post('delete/(:num)', 'PerformanceController::delete/$1');
+});
+
+$routes->group('ahp', ['filter' => 'authGuard'], function ($routes) {
+  $routes->get('calculate', 'AhpResultsController::calculateAHP');
 });

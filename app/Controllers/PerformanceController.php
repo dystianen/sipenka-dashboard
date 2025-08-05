@@ -12,7 +12,7 @@ use App\Models\TeacherQuestionScoreModel;
 
 class PerformanceController extends BaseController
 {
-    protected $teacherModel, $criteriaModel, $subcategoryModel, $questionModel, $periodModel;
+    protected $teacherModel, $criteriaModel, $subcategoryModel, $questionModel, $periodModel, $teacherQuestionScoreModel;
 
     public function __construct()
     {
@@ -21,21 +21,40 @@ class PerformanceController extends BaseController
         $this->subcategoryModel = new QuestionSubcategoryModel();
         $this->questionModel = new QuestionModel();
         $this->periodModel = new PeriodModel();
+        $this->teacherQuestionScoreModel = new TeacherQuestionScoreModel();
     }
 
     public function index()
     {
+        $period = $this->periodModel
+            ->where('is_active', 1)
+            ->first();
+
+        if (!$period) {
+            throw new \RuntimeException("No active period found.");
+        }
+
+        $totalCategories = count($this->criteriaModel->findAll());
+
         $currentPage = $this->request->getVar('page') ? (int)$this->request->getVar('page') : 1;
         $totalLimit = 10;
         $offset = ($currentPage - 1) * $totalLimit;
 
         $teachers = $this->teacherModel->getAllWithUser($totalLimit, $offset);
-        $totalRows = $this->teacherModel->countAllResults();
+        $teachersWithStatus = [];
+
+        foreach ($teachers as $teacher) {
+            $scoredCategories = $this->teacherQuestionScoreModel
+                ->getScoredCategoryCount($teacher['teacher_id'], $period['period_id']);
+
+            $uniqueScoredCategoryCount = count($scoredCategories);
+            $teacher['is_fully_scored'] = $uniqueScoredCategoryCount >= $totalCategories;
+            $teachersWithStatus[] = $teacher;
+        }
 
         $data = [
-            'teachers' => $teachers,
+            'teachers' => $teachersWithStatus,
             'pager' => [
-                'totalPages' => ceil($totalRows / $totalLimit),
                 'currentPage' => $currentPage,
                 'limit' => $totalLimit,
             ],
@@ -44,15 +63,26 @@ class PerformanceController extends BaseController
         return view('performance-assesment/v_index', $data);
     }
 
-    public function pageCriteria()
+    public function pageCriteria($teacherId)
     {
+        $period = $this->periodModel
+            ->where('is_active', 1)
+            ->first();
+
+        $activePeriodId = $period['period_id'];
         $criterias = $this->criteriaModel->findAll();
+
+        $completedCategoryIds = $this->teacherQuestionScoreModel
+            ->getCompletedCategories($teacherId, $activePeriodId);
+
         $data = [
-            'criterias' => $criterias
+            'criterias' => $criterias,
+            'evaluatedCriterias' => $completedCategoryIds
         ];
 
         return view('performance-assesment/v_criteria', $data);
     }
+
 
     public function pageEvaluation($teacherId, $criteriaId)
     {
@@ -114,7 +144,6 @@ class PerformanceController extends BaseController
                 'updated_at' => date('Y-m-d H:i:s'),
             ]);
         }
-
-        return redirect()->to('/performance-assesment')->with('message', 'Penilaian berhasil disimpan.');
+        return redirect()->to('/performance-assesment/' . $teacherId)->with('message', 'Penilaian berhasil disimpan.');
     }
 }
