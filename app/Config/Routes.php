@@ -84,4 +84,5 @@ $routes->group('ahp', ['filter' => 'authGuard'], function ($routes) {
 
 $routes->group('evaluation-results', ['filter' => 'authGuard'], function ($routes) {
   $routes->get('', 'EvaluationController::index');
+  $routes->get('pdf/generate', 'PdfController::generate');
 });
