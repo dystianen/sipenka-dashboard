@@ -39,7 +39,7 @@ class PairwiseController extends BaseController
             'periods' => $periods
         ];
 
-        return view('pairwise_comparison/v_index', $data);
+        return view('pairwise-comparison/v_index', $data);
     }
 
     public function save()
