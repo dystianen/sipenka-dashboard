@@ -33,10 +33,24 @@ class UserSeeder extends Seeder
             [
                 'name'       => 'Guru 2',
                 'email'      => 'guru2@gmail.com',
-                'password'   => password_hash('guru123', PASSWORD_DEFAULT),
+                'password'   => password_hash('123', PASSWORD_DEFAULT),
                 'role'       => 'guru',
                 'created_at' => date('Y-m-d H:i:s'),
-            ]
+            ],
+            [
+                'name'       => 'Guru 3',
+                'email'      => 'guru3@gmail.com',
+                'password'   => password_hash('123', PASSWORD_DEFAULT),
+                'role'       => 'guru',
+                'created_at' => date('Y-m-d H:i:s'),
+            ],
+            [
+                'name'       => 'Guru 4',
+                'email'      => 'guru4@gmail.com',
+                'password'   => password_hash('123', PASSWORD_DEFAULT),
+                'role'       => 'guru',
+                'created_at' => date('Y-m-d H:i:s'),
+            ],
         ];
 
         // Insert all users

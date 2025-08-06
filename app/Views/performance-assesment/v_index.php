@@ -24,9 +24,20 @@
         </div>
       </div>
 
-      <a href="<?= site_url('/ahp/calculate') ?>" class="btn btn-primary" <?= !$is_all_scored ? 'disabled' : '' ?>>
-        Calculate AHP
-      </a>
+      <div style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 1000; text-align: center;">
+        <form action="<?= site_url('/ahp/calculate') ?>" method="post">
+          <?= csrf_field() ?>
+          <button type="submit" class="btn btn-primary" <?= !$can_process_ahp ? 'disabled' : '' ?>>
+            Calculate AHP
+          </button>
+          <?php if (!$can_process_ahp): ?>
+            <small class="d-block mt-1 text-danger">
+              * You must complete all pairwise comparisons and ensure all teachers are fully scored before calculating AHP.
+            </small>
+          <?php endif; ?>
+        </form>
+      </div>
+
     </div>
   <?php endif; ?>
 </div>

@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
+use App\Models\AhpResultModel;
 use App\Models\CriteriaModel;
 use App\Models\PeriodModel;
 use App\Models\QuestionModel;
@@ -12,7 +13,7 @@ use App\Models\TeacherQuestionScoreModel;
 
 class PerformanceController extends BaseController
 {
-    protected $teacherModel, $criteriaModel, $subcategoryModel, $questionModel, $periodModel, $teacherQuestionScoreModel;
+    protected $teacherModel, $criteriaModel, $subcategoryModel, $questionModel, $periodModel, $teacherQuestionScoreModel, $ahpResultModel;
 
     public function __construct()
     {
@@ -22,6 +23,7 @@ class PerformanceController extends BaseController
         $this->questionModel = new QuestionModel();
         $this->periodModel = new PeriodModel();
         $this->teacherQuestionScoreModel = new TeacherQuestionScoreModel();
+        $this->ahpResultModel = new AhpResultModel();
     }
 
     public function index()
@@ -35,6 +37,10 @@ class PerformanceController extends BaseController
         }
 
         $totalCategories = count($this->criteriaModel->findAll());
+
+        $hasAhpResults = $this->ahpResultModel
+            ->where('period_id', $period['period_id'])
+            ->countAllResults() > 0;
 
         $currentPage = $this->request->getVar('page') ? (int)$this->request->getVar('page') : 1;
         $totalLimit = 10;
@@ -60,7 +66,7 @@ class PerformanceController extends BaseController
 
         $data = [
             'teachers' => $teachersWithStatus,
-            'is_all_scored' => $isAllScored,
+            'can_process_ahp' => $isAllScored && $hasAhpResults,
             'pager' => [
                 'currentPage' => $currentPage,
                 'limit' => $totalLimit,
@@ -136,9 +142,7 @@ class PerformanceController extends BaseController
 
         $givenBy = session()->get('user_id');
 
-        $scoreModel = new TeacherQuestionScoreModel();
-
-        // dd($scores);
+        $scoreModel = $this->teacherQuestionScoreModel;
 
         foreach ($scores as $questionId => $score) {
             $scoreModel->insert([
