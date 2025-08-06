@@ -39,4 +39,18 @@ class EvaluationResultModel extends Model
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
+
+    public function getEvaluationWithTeachers($periodId, $ahpResultId)
+    {
+        return $this->db->table($this->table)
+            ->select('evaluation_results.*, users.name as teacher_name')
+            ->join('teachers', 'teachers.teacher_id = evaluation_results.teacher_id')
+            ->join('users', 'users.user_id = teachers.user_id')
+            ->where('evaluation_results.period_id', $periodId)
+            ->where('evaluation_results.ahp_result_id', $ahpResultId)
+            ->where('evaluation_results.deleted_at', null)
+            ->orderBy('evaluation_results.rank', 'ASC')
+            ->get()
+            ->getResultArray();
+    }
 }

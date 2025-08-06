@@ -3,9 +3,29 @@
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
+use App\Models\AhpResultModel;
+use App\Models\CriteriaModel;
+use App\Models\EvaluationResultModel;
+use App\Models\PairwiseComparisonModel;
+use App\Models\PeriodModel;
+use App\Models\TeacherModel;
+use App\Models\TeacherQuestionScoreModel;
 
 class AhpResultsController extends BaseController
 {
+    protected $ahpResultModel, $teacherScoreModel, $evaluationModel, $periodModel, $teacherModel, $categoryModel, $comparisonModel;
+
+    public function __construct()
+    {
+        $this->ahpResultModel = new AhpResultModel();
+        $this->teacherScoreModel = new TeacherQuestionScoreModel();
+        $this->evaluationModel = new EvaluationResultModel();
+        $this->periodModel = new PeriodModel();
+        $this->teacherModel = new TeacherModel();
+        $this->categoryModel = new CriteriaModel();
+        $this->comparisonModel = new PairwiseComparisonModel();
+    }
+
     private function getRandomIndex($n)
     {
         $riTable = [
@@ -25,17 +45,15 @@ class AhpResultsController extends BaseController
 
     public function generateEvaluationResults()
     {
-        $ahpResultModel = new \App\Models\AhpResultModel();
-        $teacherScoreModel = new \App\Models\TeacherQuestionScoreModel();
-        $evaluationModel = new \App\Models\EvaluationResultModel();
-        $periodModel = new \App\Models\PeriodModel();
-        $teacherModel = new \App\Models\TeacherModel();
-
-        $period = $periodModel->where('is_active', 1)->first();
+        // Ambil periode aktif
+        $period = $this->periodModel->where('is_active', 1)->first();
+        if (!$period) {
+            return redirect()->back()->with('error', 'Periode aktif tidak ditemukan.');
+        }
         $periodId = $period['period_id'];
 
-        // Ambil ahp_result terbaru untuk periode ini
-        $ahpResult = $ahpResultModel
+        // Ambil hasil AHP terbaru untuk periode ini
+        $ahpResult = $this->ahpResultModel
             ->where('period_id', $periodId)
             ->orderBy('created_at', 'DESC')
             ->first();
@@ -45,16 +63,14 @@ class AhpResultsController extends BaseController
         }
 
         $weights = json_decode($ahpResult['weights'], true);
-
-        // Ambil semua guru
-        $teachers = $teacherModel->findAll();
+        $teachers = $this->teacherModel->findAll();
         $results = [];
 
         foreach ($teachers as $teacher) {
             $teacherId = $teacher['teacher_id'];
 
-            // Ambil skor per kategori untuk guru ini
-            $scores = $teacherScoreModel
+            // Ambil skor rata-rata per kategori untuk guru ini
+            $scores = $this->teacherScoreModel
                 ->select('questions.category_id, AVG(teacher_question_scores.score) as avg_score')
                 ->join('questions', 'questions.question_id = teacher_question_scores.question_id')
                 ->where('teacher_question_scores.period_id', $periodId)
@@ -68,7 +84,6 @@ class AhpResultsController extends BaseController
                 $categoryId = $s['category_id'];
                 $avgScore = floatval($s['avg_score']);
                 $weight = $weights[$categoryId] ?? 0;
-
                 $finalScore += $avgScore * $weight;
             }
 
@@ -86,10 +101,14 @@ class AhpResultsController extends BaseController
         foreach ($results as &$r) {
             $r['rank'] = $rank++;
         }
+        unset($r);
 
-        // Simpan ke DB
+        // Hapus hasil sebelumnya untuk periode ini
+        $this->evaluationModel->where('period_id', $periodId)->delete();
+
+        // Simpan hasil baru
         foreach ($results as $r) {
-            $evaluationModel->save([
+            $this->evaluationModel->insert([
                 'teacher_id'    => $r['teacher_id'],
                 'ahp_result_id' => $r['ahp_result_id'],
                 'period_id'     => $r['period_id'],
@@ -98,23 +117,20 @@ class AhpResultsController extends BaseController
             ]);
         }
 
-        return redirect()->to('/evaluations')->with('success', 'Hasil evaluasi berhasil disimpan.');
+        return redirect()->to('/evaluation-results')->with('success', 'Hasil evaluasi berhasil disimpan.');
     }
+
+
 
     public function calculateAHP()
     {
-        $comparisonModel = new \App\Models\PairwiseComparisonModel();
-        $ahpResultModel = new \App\Models\AhpResultModel();
-        $categoryModel = new \App\Models\CriteriaModel();
-        $periodModel = new \App\Models\PeriodModel();
-
-        $period = $periodModel
+        $period = $this->periodModel
             ->where('is_active', 1)
             ->first();
 
         $activePeriodId = $period['period_id'];
 
-        $categories = $categoryModel->findAll();
+        $categories = $this->categoryModel->findAll();
         $categoryIds = array_column($categories, 'category_id');
         $n = count($categoryIds);
 
@@ -125,7 +141,7 @@ class AhpResultsController extends BaseController
         $categoryIndexMap = array_flip($categoryIds);
 
         // Ambil data pairwise dari DB
-        $comparisons = $comparisonModel->where('period_id', $activePeriodId)->findAll();
+        $comparisons = $this->comparisonModel->where('period_id', $activePeriodId)->findAll();
 
         // Isi matriks berdasarkan data
         foreach ($comparisons as $row) {
@@ -177,7 +193,7 @@ class AhpResultsController extends BaseController
         $CR = ($RI == 0) ? 0 : $CI / $RI;
 
         // Simpan ke ahp_results
-        $ahpResultModel->insert([
+        $this->ahpResultModel->insert([
             'period_id'    => $activePeriodId,
             'weights'      => json_encode($weights),
             'calculated_by' => session()->get('user_id') ?? 1,

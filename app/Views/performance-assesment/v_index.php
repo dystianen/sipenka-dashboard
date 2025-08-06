@@ -24,7 +24,7 @@
         </div>
       </div>
 
-      <a href="<?= site_url('/ahp/calculate') ?>" class="btn btn-primary">
+      <a href="<?= site_url('/ahp/calculate') ?>" class="btn btn-primary" <?= !$is_all_scored ? 'disabled' : '' ?>>
         Calculate AHP
       </a>
     </div>

@@ -42,6 +42,7 @@ class PerformanceController extends BaseController
 
         $teachers = $this->teacherModel->getAllWithUser($totalLimit, $offset);
         $teachersWithStatus = [];
+        $isAllScored = true;
 
         foreach ($teachers as $teacher) {
             $scoredCategories = $this->teacherQuestionScoreModel
@@ -49,11 +50,17 @@ class PerformanceController extends BaseController
 
             $uniqueScoredCategoryCount = count($scoredCategories);
             $teacher['is_fully_scored'] = $uniqueScoredCategoryCount >= $totalCategories;
+
+            if (!$teacher['is_fully_scored']) {
+                $isAllScored = false;
+            }
+
             $teachersWithStatus[] = $teacher;
         }
 
         $data = [
             'teachers' => $teachersWithStatus,
+            'is_all_scored' => $isAllScored,
             'pager' => [
                 'currentPage' => $currentPage,
                 'limit' => $totalLimit,

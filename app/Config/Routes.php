@@ -59,3 +59,7 @@ $routes->group('performance-assesment', ['filter' => 'authGuard'], function ($ro
 $routes->group('ahp', ['filter' => 'authGuard'], function ($routes) {
   $routes->get('calculate', 'AhpResultsController::calculateAHP');
 });
+
+$routes->group('evaluation-results', ['filter' => 'authGuard'], function ($routes) {
+  $routes->get('', 'EvaluationController::index');
+});
