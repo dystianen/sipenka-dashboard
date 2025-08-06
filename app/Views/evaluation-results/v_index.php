@@ -3,10 +3,12 @@
 <div class="container-fluid card">
   <div class="card-header mb-4 pb-0 d-flex align-items-center justify-content-between">
     <h4>Teachers Rank</h4>
-    <a class="btn btn-danger" href="<?php echo site_url('evaluation-results/pdf/generate') ?>">
-      <i class="fas fa-file-pdf"></i>
-      Export PDF
-    </a>
+    <?php if (!empty($evaluations)): ?>
+      <a class="btn btn-danger" href="<?php echo site_url('evaluation-results/pdf/generate') ?>">
+        <i class="fas fa-file-pdf"></i>
+        Export PDF
+      </a>
+    <?php endif; ?>
   </div>
 
   <div class="card-body px-0 pt-0 pb-2">
@@ -22,7 +24,7 @@
         <tbody>
           <?php if (empty($evaluations)): ?>
             <tr>
-              <td colspan="9" class="text-center text-muted">No teachers data available.</td>
+              <td colspan="9" class="text-center text-muted">No teachers rank data available.</td>
             </tr>
           <?php else: ?>
             <?php foreach ($evaluations as $e): ?>

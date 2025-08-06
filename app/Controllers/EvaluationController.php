@@ -26,7 +26,7 @@ class EvaluationController extends BaseController
             ->first();
 
         if (!$latestAhp) {
-            return view('rank/index', ['evaluations' => [], 'message' => 'Data AHP tidak ditemukan.']);
+            return view('evaluation-results/v_index', ['evaluations' => [], 'message' => 'Data AHP tidak ditemukan.']);
         }
 
         $evaluations = $evaluationModel->getEvaluationWithTeachers($periodId, $latestAhp['ahp_result_id']);
