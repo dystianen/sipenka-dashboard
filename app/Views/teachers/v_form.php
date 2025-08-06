@@ -53,8 +53,8 @@
           <label for="gender">Gender</label>
           <select class="form-control" name="gender" id="gender" required>
             <option value="">-- Select Gender --</option>
-            <option value="L" <?= (old('gender', $teacher['gender'] ?? '') == 'L') ? 'selected' : '' ?>>Laki-laki</option>
-            <option value="P" <?= (old('gender', $teacher['gender'] ?? '') == 'P') ? 'selected' : '' ?>>Perempuan</option>
+            <option value="Laki-laki" <?= (old('gender', $teacher['gender'] ?? '') == 'Laki-laki') ? 'selected' : '' ?>>Laki-laki</option>
+            <option value="Perempuan" <?= (old('gender', $teacher['gender'] ?? '') == 'Perempuan') ? 'selected' : '' ?>>Perempuan</option>
           </select>
         </div>
 
