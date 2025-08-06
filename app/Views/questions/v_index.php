@@ -34,7 +34,7 @@
                 <td><?= esc($q['category_name']) ?></td>
                 <td><?= esc($q['subcategory_name']) ?></td>
                 <td><?= esc($q['question_text']) ?></td>
-                <td><?= esc($q['scoring_type']) ?></td>
+                <td><?= esc($q['scoring_type']) == 'scale_1_3' ? 'Scale 1-3' : 'Yes/No (Boolean)' ?></td>
                 <td><?= esc($q['weight']) ?></td>
                 <td>
                   <a href="<?= base_url('/questions/form?id=' . $q['question_id']) ?>" class="btn btn-sm btn-warning"><i class="fa fa-edit"></i></a>

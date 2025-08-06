@@ -115,6 +115,15 @@
             </a>
           </li>
 
+          <li class="nav-item">
+            <a class="nav-link <?= $currentURI === 'periods' ? 'active' : '' ?>" href="/periods">
+              <div class="me-2 d-flex align-items-center justify-content-center">
+                <i class="fas fa-clock"></i>
+              </div>
+              <span class="nav-link-text ms-1">Periods</span>
+            </a>
+          </li>
+
           <hr />
 
           <li class="nav-item">
@@ -131,7 +140,7 @@
               <div class="me-2 d-flex align-items-center justify-content-center">
                 <i class="fab fa-envira"></i>
               </div>
-              <span class="nav-link-text ms-1">Questions Subcategory</span>
+              <span class="nav-link-text ms-1">Question Subcategories</span>
             </a>
           </li>
 
@@ -163,16 +172,16 @@
               <span class="nav-link-text ms-1">Performance Assesment</span>
             </a>
           </li>
-
-          <li class="nav-item">
-            <a class="nav-link <?= $currentURI === 'evaluation-results' ? 'active' : '' ?>" href="/evaluation-results">
-              <div class="me-2 d-flex align-items-center justify-content-center">
-                <i class="fas fa-vial"></i>
-              </div>
-              <span class="nav-link-text ms-1">Evaluation Results</span>
-            </a>
-          </li>
         <?php endif; ?>
+
+        <li class="nav-item">
+          <a class="nav-link <?= $currentURI === 'evaluation-results' ? 'active' : '' ?>" href="/evaluation-results">
+            <div class="me-2 d-flex align-items-center justify-content-center">
+              <i class="fas fa-vial"></i>
+            </div>
+            <span class="nav-link-text ms-1">Evaluation Results</span>
+          </a>
+        </li>
     </div>
   </aside>
 

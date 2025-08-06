@@ -62,7 +62,7 @@
       </div>
 
       <a href="<?= base_url('/questions') ?>" class="btn btn-secondary">Back</a>
-      <button type="submit" class="btn btn-success"><?= isset($question) ? 'Update' : 'Create' ?></button>
+      <button type="submit" class="btn btn-primary"><?= isset($question) ? 'Update' : 'Create' ?></button>
     </form>
   </div>
 </div>

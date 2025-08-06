@@ -2,8 +2,8 @@
 <?= $this->section('content') ?>
 <div class="container-fluid card">
   <div class="card-header mb-4 pb-0 d-flex align-items-center justify-content-between">
-    <h4>Users List</h4>
-    <a href="<?= base_url('/users/form') ?>" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> Add User</a>
+    <h4>Periods</h4>
+    <a href="<?= base_url('/periods/form') ?>" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> Add Period</a>
   </div>
 
   <div class="card-body px-0 pt-0 pb-2">
@@ -13,28 +13,30 @@
           <tr>
             <th>No</th>
             <th>Name</th>
-            <th>Email</th>
-            <th>Role</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Active</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           <?php $startIndex = ($pager["currentPage"] - 1) * $pager["limit"] + 1; ?>
 
-          <?php if (empty($users)): ?>
+          <?php if (empty($periods)): ?>
             <tr>
-              <td colspan="5" class="text-center text-muted">No user data available.</td>
+              <td colspan="7" class="text-center text-muted">No period data available.</td>
             </tr>
           <?php else: ?>
-            <?php foreach ($users as $user): ?>
+            <?php foreach ($periods as $p): ?>
               <tr>
                 <td><?= $startIndex++ ?></td>
-                <td><?= $user['name'] ?></td>
-                <td><?= $user['email'] ?></td>
-                <td><?= $user['role'] ?></td>
+                <td><?= $p['name'] ?></td>
+                <td><?= $p['start_date'] ?></td>
+                <td><?= $p['end_date'] ?></td>
+                <td><?= $p['is_active'] ? 'Yes' : 'No' ?></td>
                 <td>
-                  <a href="<?= base_url('/users/form?id=' . $user['user_id']) ?>" class="btn btn-sm btn-warning"><i class="fa fa-edit"></i></a>
-                  <form action="<?= base_url('/users/delete/' . $user['user_id']) ?>" method="post" style="display:inline-block;">
+                  <a href="<?= base_url('/periods/form?id=' . $p['period_id']) ?>" class="btn btn-sm btn-warning"><i class="fa fa-edit"></i></a>
+                  <form action="<?= base_url('/periods/delete/' . $p['period_id']) ?>" method="post" style="display:inline-block;">
                     <?= csrf_field() ?>
                     <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')"><i class="fa fa-trash"></i></button>
                   </form>
@@ -63,7 +65,7 @@
 
   // PAGINATION
   function handlePagination(pageNumber) {
-    window.location.replace(`<?php echo base_url(); ?>users?page=${pageNumber}`);
+    window.location.replace(`<?php echo base_url(); ?>periods?page=${pageNumber}`);
   }
 
   var paginationContainer = document.getElementById('pagination');

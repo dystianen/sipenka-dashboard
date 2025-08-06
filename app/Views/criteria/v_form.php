@@ -22,8 +22,8 @@
           value="<?= esc($criteria['description'] ?? '') ?>">
       </div>
 
+      <a href="<?= base_url('/criteria') ?>" class="btn btn-secondary">Back</a>
       <button type="submit" class="btn btn-primary">Save</button>
-      <a href="<?= base_url('/criteria') ?>" class="btn btn-secondary">Cancel</a>
     </form>
   </div>
 </div>

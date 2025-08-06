@@ -48,7 +48,7 @@
           <?php endforeach; ?>
         </tbody>
       </table>
-      <button type="submit" class="btn btn-success">Save Pairwise Comparison</button>
+      <button type="submit" class="btn btn-primary">Save Pairwise Comparison</button>
     </div>
   </div>
 </form>

@@ -37,7 +37,7 @@
       </div>
 
       <a href="<?= base_url('/question-subcategories') ?>" class="btn btn-secondary">Back</a>
-      <button type="submit" class="btn btn-success"><?= isset($subcategory) ? 'Update' : 'Create' ?></button>
+      <button type="submit" class="btn btn-primary"><?= isset($subcategory) ? 'Update' : 'Create' ?></button>
     </form>
   </div>
 </div>
