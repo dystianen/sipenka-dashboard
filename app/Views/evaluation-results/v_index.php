@@ -4,7 +4,7 @@
   <div class="card-header mb-4 pb-0 d-flex align-items-center justify-content-between">
     <h4>Teachers Rank</h4>
     <a class="btn btn-danger" href="<?php echo site_url('evaluation-results/pdf/generate') ?>">
-      <i class="fa fa-file-export"></i>
+      <i class="fas fa-file-pdf"></i>
       Export PDF
     </a>
   </div>

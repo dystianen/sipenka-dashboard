@@ -20,7 +20,9 @@ class PeriodController extends BaseController
         $totalLimit = 10;
         $offset = ($currentPage - 1) * $totalLimit;
 
-        $periods = $this->periodModel->findAll($totalLimit, $offset);
+        $periods = $this->periodModel
+            ->orderBy('created_at', 'DESC')
+            ->findAll($totalLimit, $offset);
 
         $totalRows = $this->periodModel->countAllResults();
 

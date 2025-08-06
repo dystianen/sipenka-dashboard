@@ -85,7 +85,7 @@
       <ul class="navbar-nav">
         <?php $role = session('role'); ?>
 
-        <!-- Menu untuk semua role -->
+        <!-- Menu Umum -->
         <li class="nav-item">
           <a class="nav-link <?= $currentURI === 'dashboard' ? 'active' : '' ?>" href="/dashboard">
             <div class="me-2 d-flex align-items-center justify-content-center">
@@ -95,7 +95,7 @@
           </a>
         </li>
 
-        <!-- Admin (1) dan Kepala Sekolah (3) -->
+        <!-- Admin dan Kepala Sekolah -->
         <?php if (in_array($role, ['admin', 'kepala_sekolah'])) : ?>
           <li class="nav-item">
             <a class="nav-link <?= $currentURI === 'users' ? 'active' : '' ?>" href="/users">
@@ -174,6 +174,7 @@
           </li>
         <?php endif; ?>
 
+        <!-- Menu Umum -->
         <li class="nav-item">
           <a class="nav-link <?= $currentURI === 'evaluation-results' ? 'active' : '' ?>" href="/evaluation-results">
             <div class="me-2 d-flex align-items-center justify-content-center">
@@ -182,6 +183,7 @@
             <span class="nav-link-text ms-1">Evaluation Results</span>
           </a>
         </li>
+      </ul>
     </div>
   </aside>
 

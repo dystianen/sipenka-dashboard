@@ -10,7 +10,7 @@
 </head>
 
 <body>
-  <div class="card-header mb-4 pb-0 d-flex align-items-center justify-content-between">
+  <div class="card-header mb-2 pb-0">
     <h3>Teachers Rank</h3>
     <p>Periode: <?= esc($periodName) ?></p>
   </div>
