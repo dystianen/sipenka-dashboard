@@ -42,6 +42,7 @@
     <?php endif; ?>
   </div>
 
+  <div class="min-height-400 position-fixed w-100" style="background-color: #A0937D"></div>
   <main class="main-content position-relative border-radius-lg d-flex flex-column justify-content-between min-vh-100">
     <div class="mx-4">
       <!-- Start Content -->

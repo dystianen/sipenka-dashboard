@@ -18,8 +18,8 @@
       <table class="table table-responsive">
         <thead>
           <tr>
-            <th style="width: 40%">Kriteria 1</th>
-            <th style="width: 20%">Nilai</th>
+            <th style="width: 30%">Kriteria 1</th>
+            <th style="width: 30%;">Nilai</th>
             <th style="width: 40%">Kriteria 2</th>
           </tr>
         </thead>
