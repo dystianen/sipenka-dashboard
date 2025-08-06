@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Controllers\BaseController;
 use App\Models\AhpResultModel;
 use App\Models\CriteriaModel;
+use App\Models\PairwiseComparisonModel;
 use App\Models\PeriodModel;
 use App\Models\QuestionModel;
 use App\Models\QuestionSubcategoryModel;
@@ -13,7 +14,7 @@ use App\Models\TeacherQuestionScoreModel;
 
 class PerformanceController extends BaseController
 {
-    protected $teacherModel, $criteriaModel, $subcategoryModel, $questionModel, $periodModel, $teacherQuestionScoreModel, $ahpResultModel;
+    protected $teacherModel, $criteriaModel, $subcategoryModel, $questionModel, $periodModel, $teacherQuestionScoreModel, $ahpResultModel, $pairwiseComparisonModel;
 
     public function __construct()
     {
@@ -24,6 +25,7 @@ class PerformanceController extends BaseController
         $this->periodModel = new PeriodModel();
         $this->teacherQuestionScoreModel = new TeacherQuestionScoreModel();
         $this->ahpResultModel = new AhpResultModel();
+        $this->pairwiseComparisonModel = new PairwiseComparisonModel();
     }
 
     public function index()
@@ -38,8 +40,9 @@ class PerformanceController extends BaseController
 
         $totalCategories = count($this->criteriaModel->findAll());
 
-        $hasAhpResults = $this->ahpResultModel
+        $hasPairwiseComparisons = $this->pairwiseComparisonModel
             ->where('period_id', $period['period_id'])
+            ->where('deleted_at', null) // kalau soft delete
             ->countAllResults() > 0;
 
         $currentPage = $this->request->getVar('page') ? (int)$this->request->getVar('page') : 1;
@@ -66,7 +69,7 @@ class PerformanceController extends BaseController
 
         $data = [
             'teachers' => $teachersWithStatus,
-            'can_process_ahp' => $isAllScored && $hasAhpResults,
+            'can_process_ahp' => $isAllScored && $hasPairwiseComparisons,
             'pager' => [
                 'currentPage' => $currentPage,
                 'limit' => $totalLimit,

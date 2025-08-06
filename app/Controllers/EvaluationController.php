@@ -6,8 +6,6 @@ use App\Controllers\BaseController;
 use App\Models\AhpResultModel;
 use App\Models\EvaluationResultModel;
 use App\Models\PeriodModel;
-use App\Models\TeacherModel;
-use CodeIgniter\HTTP\ResponseInterface;
 
 class EvaluationController extends BaseController
 {
@@ -15,13 +13,17 @@ class EvaluationController extends BaseController
     {
         $evaluationModel = new EvaluationResultModel();
         $ahpModel = new AhpResultModel();
+        $periodModel = new PeriodModel();
 
-        // Ambil periode aktif
-        $periodId = 4; // ganti jika perlu dinamis
+        $period = $periodModel
+            ->where('is_active', 1)
+            ->first();
+
+        $activePeriodId = $period['period_id'];
 
         // Ambil AHP result terbaru untuk periode
         $latestAhp = $ahpModel
-            ->where('period_id', $periodId)
+            ->where('period_id', $activePeriodId)
             ->orderBy('created_at', 'DESC')
             ->first();
 
@@ -29,7 +31,7 @@ class EvaluationController extends BaseController
             return view('evaluation-results/v_index', ['evaluations' => [], 'message' => 'Data AHP tidak ditemukan.']);
         }
 
-        $evaluations = $evaluationModel->getEvaluationWithTeachers($periodId, $latestAhp['ahp_result_id']);
+        $evaluations = $evaluationModel->getEvaluationWithTeachers($activePeriodId, $latestAhp['ahp_result_id']);
 
         // dd($evaluations);
 

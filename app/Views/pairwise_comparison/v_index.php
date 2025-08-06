@@ -19,15 +19,14 @@
         <thead>
           <tr>
             <th style="width: 40%">Kriteria 1</th>
-            <th style="width: 40%">Kriteria 2</th>
             <th style="width: 20%">Nilai</th>
+            <th style="width: 40%">Kriteria 2</th>
           </tr>
         </thead>
         <tbody>
           <?php foreach ($pairs as $index => $pair): ?>
             <tr>
               <td><?= $pair['criteria1_name'] ?></td>
-              <td><?= $pair['criteria2_name'] ?></td>
               <td>
                 <select name="comparisons[<?= $index ?>][value]" class="form-select" required>
                   <option value="">-- Pilih --</option>
@@ -42,6 +41,7 @@
                   <option value="1/9">1/9 - Lawannya 9</option>
                 </select>
               </td>
+              <td><?= $pair['criteria2_name'] ?></td>
               <input type="hidden" name="comparisons[<?= $index ?>][criteria1_id]" value="<?= $pair['criteria1_id'] ?>">
               <input type="hidden" name="comparisons[<?= $index ?>][criteria2_id]" value="<?= $pair['criteria2_id'] ?>">
             </tr>

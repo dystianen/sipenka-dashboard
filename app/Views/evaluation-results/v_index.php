@@ -31,7 +31,7 @@
               <tr>
                 <td><?= esc($e['rank']) ?></td>
                 <td><?= esc($e['teacher_name']) ?></td>
-                <td><?= esc(number_format($e['final_score'], 4)) ?></td>
+                <td class="text-warning"><?= esc(number_format($e['final_score'], 4)) ?></td>
               </tr>
             <?php endforeach; ?>
           <?php endif; ?>

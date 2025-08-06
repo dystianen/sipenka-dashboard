@@ -202,8 +202,6 @@ class AhpResultsController extends BaseController
             'created_at'   => date('Y-m-d H:i:s')
         ]);
 
-        $this->generateEvaluationResults();
-
-        return view('performance-assesment/v_index.php');
+        return $this->generateEvaluationResults();
     }
 }
