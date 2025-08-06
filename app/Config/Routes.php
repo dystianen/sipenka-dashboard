@@ -36,8 +36,23 @@ $routes->group('users', ['filter' => 'authGuard'], function ($routes) {
 $routes->group('criteria', ['filter' => 'authGuard'], function ($routes) {
   $routes->get('', 'CriteriaController::index');
   $routes->get('form', 'CriteriaController::form');
-  $routes->post('save', 'CriteriaController::saveAll');
+  $routes->post('save', 'CriteriaController::save');
   $routes->post('delete/(:num)', 'CriteriaController::delete/$1');
+});
+
+$routes->group('question-subcategories', ['filter' => 'authGuard'], function ($routes) {
+  $routes->get('', 'SubcategoryController::index');
+  $routes->get('by-category/(:num)', 'SubcategoryController::getByCategory/$1');
+  $routes->get('form', 'SubcategoryController::form');
+  $routes->post('save', 'SubcategoryController::save');
+  $routes->post('delete/(:num)', 'SubcategoryController::delete/$1');
+});
+
+$routes->group('questions', ['filter' => 'authGuard'], function ($routes) {
+  $routes->get('', 'QuestionController::index');
+  $routes->get('form', 'QuestionController::form');
+  $routes->post('save', 'QuestionController::save');
+  $routes->post('delete/(:num)', 'QuestionController::delete/$1');
 });
 
 $routes->group('pairwise-comparison', ['filter' => 'authGuard'], function ($routes) {

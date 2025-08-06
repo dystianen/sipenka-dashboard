@@ -56,7 +56,7 @@
       <?php endforeach; ?>
 
       <div class="text-end">
-        <button type="submit" class="btn btn-success">Simpan Penilaian</button>
+        <button type="submit" class="btn btn-success">Save Evaluation</button>
       </div>
     </form>
   <?php endif; ?>

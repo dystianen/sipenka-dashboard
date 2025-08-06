@@ -107,15 +107,6 @@
           </li>
 
           <li class="nav-item">
-            <a class="nav-link <?= $currentURI === 'criteria' ? 'active' : '' ?>" href="/criteria">
-              <div class="me-2 d-flex align-items-center justify-content-center">
-                <i class="fab fa-envira"></i>
-              </div>
-              <span class="nav-link-text ms-1">Criteria</span>
-            </a>
-          </li>
-
-          <li class="nav-item">
             <a class="nav-link <?= $currentURI === 'teachers' ? 'active' : '' ?>" href="/teachers">
               <div class="me-2 d-flex align-items-center justify-content-center">
                 <i class="fas fa-user-tie"></i>
@@ -123,6 +114,37 @@
               <span class="nav-link-text ms-1">Teachers</span>
             </a>
           </li>
+
+          <hr />
+
+          <li class="nav-item">
+            <a class="nav-link <?= $currentURI === 'criteria' ? 'active' : '' ?>" href="/criteria">
+              <div class="me-2 d-flex align-items-center justify-content-center">
+                <i class="fab fa-envira"></i>
+              </div>
+              <span class="nav-link-text ms-1">Question Category</span>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link <?= $currentURI === 'question-subcategories' ? 'active' : '' ?>" href="/question-subcategories">
+              <div class="me-2 d-flex align-items-center justify-content-center">
+                <i class="fab fa-envira"></i>
+              </div>
+              <span class="nav-link-text ms-1">Questions Subcategory</span>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link <?= $currentURI === 'questions' ? 'active' : '' ?>" href="/questions">
+              <div class="me-2 d-flex align-items-center justify-content-center">
+                <i class="fab fa-envira"></i>
+              </div>
+              <span class="nav-link-text ms-1">Questions</span>
+            </a>
+          </li>
+
+          <hr />
 
           <li class="nav-item">
             <a class="nav-link <?= $currentURI === 'pairwise-comparison' ? 'active' : '' ?>" href="/pairwise-comparison">

@@ -2,8 +2,8 @@
 <?= $this->section('content') ?>
 <div class="container-fluid card">
   <div class="card-header mb-4 pb-0 d-flex align-items-center justify-content-between">
-    <h4>Criteria List</h4>
-    <a href="<?= base_url('/criterias/form') ?>" class="btn btn-primary btn-sm">Add criteria</a>
+    <h4>Questions Subcategory List</h4>
+    <a href="<?= base_url('/questions/form') ?>" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> Add Question</a>
   </div>
 
   <div class="card-body px-0 pt-0 pb-2">
@@ -12,33 +12,33 @@
         <thead>
           <tr>
             <th>No</th>
-            <th>Code</th>
-            <th>Name</th>
-            <th>Type</th>
+            <th>Category ID</th>
+            <th>Subcategory ID</th>
+            <th>Question</th>
+            <th>Scoring Type</th>
             <th>Weight</th>
-            <th>Description</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           <?php $startIndex = ($pager["currentPage"] - 1) * $pager["limit"] + 1; ?>
 
-          <?php if (empty($criterias)): ?>
+          <?php if (empty($questions)): ?>
             <tr>
               <td colspan="7" class="text-center text-muted">No criteria data available.</td>
             </tr>
           <?php else: ?>
-            <?php foreach ($criterias as $criteria): ?>
+            <?php foreach ($questions as $q): ?>
               <tr>
                 <td><?= $startIndex++ ?></td>
-                <td><?= $criteria['code'] ?></td>
-                <td><?= $criteria['name'] ?></td>
-                <td><?= $criteria['type'] ?></td>
-                <td><?= $criteria['weight'] ?></td>
-                <td><?= $criteria['description'] ?></td>
+                <td><?= esc($q['category_name']) ?></td>
+                <td><?= esc($q['subcategory_name']) ?></td>
+                <td><?= esc($q['question_text']) ?></td>
+                <td><?= esc($q['scoring_type']) ?></td>
+                <td><?= esc($q['weight']) ?></td>
                 <td>
-                  <a href="<?= base_url('/criteria/form?id=' . $criteria['criteria_id']) ?>" class="btn btn-sm btn-warning"><i class="fa fa-edit"></i></a>
-                  <form action="<?= base_url('/criteria/delete/' . $criteria['criteria_id']) ?>" method="post" style="display:inline-block;">
+                  <a href="<?= base_url('/questions/form?id=' . $q['question_id']) ?>" class="btn btn-sm btn-warning"><i class="fa fa-edit"></i></a>
+                  <form action="<?= base_url('/questions/delete/' . $q['question_id']) ?>" method="post" style="display:inline-block;">
                     <?= csrf_field() ?>
                     <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')"><i class="fa fa-trash"></i></button>
                   </form>
@@ -67,7 +67,7 @@
 
   // PAGINATION
   function handlePagination(pageNumber) {
-    window.location.replace(`<?php echo base_url(); ?>criterias?page=${pageNumber}`);
+    window.location.replace(`<?php echo base_url(); ?>questions?page=${pageNumber}`);
   }
 
   var paginationContainer = document.getElementById('pagination');

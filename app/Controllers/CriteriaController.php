@@ -47,71 +47,53 @@ class CriteriaController extends BaseController
         $data = [];
 
         if ($id) {
-            $teacher = $this->questionCategoryModel
-                ->find($id);
+            $criteria = $this->questionCategoryModel->find($id);
 
-            if (!$teacher) {
+            if (!$criteria) {
                 return redirect()->to('/criteria')->with('failed', 'Criteria not found');
             }
 
-            $data['criteria'] = $teacher;
+            $data['criteria'] = $criteria;
         }
 
         return view('criteria/v_form', $data);
     }
 
-    public function saveAll()
+
+    public function save()
     {
-        $categories = $this->request->getPost('categories');
+        $this->validate([
+            'name' => 'required|min_length[3]',
+            'description' => 'permit_empty|max_length[255]',
+        ]);
 
-        if (!$categories || !is_array($categories)) {
-            return redirect()->back()->withInput()->with('failed', 'No data submitted.');
-        }
+        $id = $this->request->getPost('category_id');
 
-        foreach ($categories as $category) {
-            // 1. Simpan category
-            $categoryData = [
-                'name' => $category['name'],
-                'description' => $category['description'] ?? null,
-            ];
+        $data = [
+            'name' => $this->request->getPost('name'),
+            'description' => $this->request->getPost('description'),
+        ];
 
-            $categoryId = $this->questionCategoryModel->insert($categoryData, true); // true = return inserted ID
-
-            // 2. Cek dan simpan subcategories jika ada
-            if (isset($category['subcategories']) && is_array($category['subcategories'])) {
-                foreach ($category['subcategories'] as $subcategory) {
-                    $subData = [
-                        'category_id' => $categoryId,
-                        'name' => $subcategory['name'],
-                        'description' => $subcategory['description'] ?? null,
-                    ];
-
-                    $subcategoryId = $this->questionSubcategoryModel->insert($subData, true);
-
-                    // 3. Simpan questions jika ada
-                    if (isset($subcategory['questions']) && is_array($subcategory['questions'])) {
-                        foreach ($subcategory['questions'] as $question) {
-                            $questionData = [
-                                'category_id' => $categoryId,
-                                'subcategory_id' => $subcategoryId,
-                                'question_text' => $question['text'],
-                                'scoring_type' => 'scale_1_5', // default, bisa disesuaikan
-                                'weight' => 1.0, // default, bisa diatur jika ditambahkan ke form
-                            ];
-
-                            $this->questionModel->insert($questionData);
-                        }
-                    }
-                }
+        if ($id) {
+            // Edit
+            $exists = $this->questionCategoryModel->find($id);
+            if (!$exists) {
+                return redirect()->to('/criteria')->with('failed', 'Category not found');
             }
-        }
 
-        return redirect()->to('/questions')->with('success', 'All questions saved successfully!');
+            $this->questionCategoryModel->update($id, $data);
+            return redirect()->to('/criteria')->with('success', 'Category updated successfully');
+        } else {
+            // Create
+            $this->questionCategoryModel->insert($data);
+            return redirect()->to('/criteria')->with('success', 'Category added successfully');
+        }
     }
+
 
     public function delete($id)
     {
         $this->questionCategoryModel->delete($id);
-        return redirect()->to('/criteria')->with('success', 'Data kriteria berhasil dihapus.');
+        return redirect()->to('/criteria')->with('success', 'Category deleted successfully');
     }
 }

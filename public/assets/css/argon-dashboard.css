@@ -23793,7 +23793,7 @@ html {
 }
 
 hr {
-  border-top: none;
+  /* border-top: none; */
   height: 1px;
 }
 

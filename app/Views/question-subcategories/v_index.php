@@ -2,8 +2,8 @@
 <?= $this->section('content') ?>
 <div class="container-fluid card">
   <div class="card-header mb-4 pb-0 d-flex align-items-center justify-content-between">
-    <h4>Teachers List</h4>
-    <a href="<?= base_url('/teachers/form') ?>" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> Add Teacher</a>
+    <h4>Questions Subcategory List</h4>
+    <a href="<?= base_url('/question-subcategories/form') ?>" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> Add Subcategory</a>
   </div>
 
   <div class="card-body px-0 pt-0 pb-2">
@@ -12,35 +12,29 @@
         <thead>
           <tr>
             <th>No</th>
+            <th>Category</th>
             <th>Name</th>
-            <th>Education</th>
-            <th>Major</th>
-            <th>Institution</th>
-            <th>Email</th>
-            <th>Phone Number</th>
-            <th>Action</th>
+            <th>Description</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           <?php $startIndex = ($pager["currentPage"] - 1) * $pager["limit"] + 1; ?>
 
-          <?php if (empty($teachers)): ?>
+          <?php if (empty($subcategories)): ?>
             <tr>
-              <td colspan="9" class="text-center text-muted">No teachers data available.</td>
+              <td colspan="7" class="text-center text-muted">No criteria data available.</td>
             </tr>
           <?php else: ?>
-            <?php foreach ($teachers as $teacher): ?>
+            <?php foreach ($subcategories as $subcategory): ?>
               <tr>
-                <td><?= $startIndex++ ?></td>
-                <td><?= esc($teacher['name']) ?></td>
-                <td><?= esc($teacher['education']) ?></td>
-                <td><?= esc($teacher['major']) ?></td>
-                <td><?= esc($teacher['institution']) ?></td>
-                <td><?= esc($teacher['email']) ?></td>
-                <td><?= esc($teacher['phone_number']) ?></td>
+                <td><?= esc($subcategory['subcategory_id']) ?></td>
+                <td><?= esc($subcategory['category_name']) ?></td>
+                <td><?= esc($subcategory['name']) ?></td>
+                <td><?= esc($subcategory['description']) ?></td>
                 <td>
-                  <a href="<?= base_url('/teachers/form?id=' . $teacher['teacher_id']) ?>" class="btn btn-sm btn-warning"><i class="fa fa-edit"></i></a>
-                  <form action="<?= base_url('/teachers/delete/' . $teacher['teacher_id']) ?>" method="post" style="display:inline-block;">
+                  <a href="<?= base_url('/question-subcategories/form?id=' . $subcategory['subcategory_id']) ?>" class="btn btn-sm btn-warning"><i class="fa fa-edit"></i></a>
+                  <form action="<?= base_url('/question-subcategories/delete/' . $subcategory['subcategory_id']) ?>" method="post" style="display:inline-block;">
                     <?= csrf_field() ?>
                     <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')"><i class="fa fa-trash"></i></button>
                   </form>
@@ -69,7 +63,7 @@
 
   // PAGINATION
   function handlePagination(pageNumber) {
-    window.location.replace(`<?php echo base_url(); ?>customers?page=${pageNumber}`);
+    window.location.replace(`<?php echo base_url(); ?>question-subcategories?page=${pageNumber}`);
   }
 
   var paginationContainer = document.getElementById('pagination');
