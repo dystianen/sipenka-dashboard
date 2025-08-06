@@ -47,7 +47,7 @@ class PdfController extends Controller
         $dompdf->render();
 
         // Nama file
-        $filename = date('Y-m-d-H-i-s') . '-teacher-ranking';
+        $filename = date('Y-m-d') . '-teacher-ranking';
 
         // Stream PDF
         $dompdf->stream($filename, ['Attachment' => true]);
