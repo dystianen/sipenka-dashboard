@@ -2,7 +2,7 @@
 <?= $this->section('content') ?>
 <div class="container-fluid card">
   <div class="card-header mb-4 pb-0 d-flex align-items-center justify-content-between">
-    <h4>Questions Subcategory List</h4>
+    <h4>Question Subcategories List</h4>
     <a href="<?= base_url('/question-subcategories/form') ?>" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> Add Subcategory</a>
   </div>
 
