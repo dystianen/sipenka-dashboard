@@ -3,10 +3,19 @@
 <div class="container-fluid card">
   <div class="card-header mb-4 pb-0 d-flex align-items-center justify-content-between">
     <h4>Teachers Rank</h4>
+
+    <!-- Filter Range Tanggal -->
+    <form action="<?= site_url('evaluation-results') ?>" method="get" class="d-flex align-items-center gap-2">
+      <input type="date" name="start_date" value="<?= esc($start_date) ?>" class="form-control form-control-sm">
+      <span>to</span>
+      <input type="date" name="end_date" value="<?= esc($end_date) ?>" class="form-control form-control-sm">
+      <button type="submit" class="btn btn-primary btn-sm">Show</button>
+    </form>
+
     <?php if (!empty($evaluations)): ?>
-      <a class="btn btn-danger" href="<?php echo site_url('evaluation-results/pdf/generate') ?>">
-        <i class="fas fa-file-pdf"></i>
-        Export PDF
+      <a class="btn btn-danger"
+        href="<?= site_url('evaluation-results/pdf/generate?start_date=' . esc($start_date) . '&end_date=' . esc($end_date)) ?>">
+        <i class="fas fa-file-pdf"></i> Download PDF
       </a>
     <?php endif; ?>
   </div>
@@ -36,7 +45,6 @@
             <?php endforeach; ?>
           <?php endif; ?>
         </tbody>
-
       </table>
     </div>
   </div>
