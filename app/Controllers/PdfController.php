@@ -20,9 +20,13 @@ class PdfController extends Controller
             ->where('is_active', 1)
             ->first();
 
+        if (!$period) {
+            return redirect()->back()->with('error', 'Active period not found.');
+        }
+
         $activePeriodId = $period['period_id'];
 
-        // Ambil AHP result terbaru
+        // Ambil AHP result terbaru untuk periode
         $latestAhp = $ahpModel
             ->where('period_id', $activePeriodId)
             ->orderBy('created_at', 'DESC')
@@ -36,16 +40,13 @@ class PdfController extends Controller
         $startDate = $this->request->getGet('start_date');
         $endDate   = $this->request->getGet('end_date');
 
-        $builder = $evaluationModel
-            ->where('period_id', $activePeriodId)
-            ->where('ahp_result_id', $latestAhp['ahp_result_id']);
-
-        if ($startDate && $endDate) {
-            $builder->where('created_at >=', $startDate . ' 00:00:00')
-                ->where('created_at <=', $endDate . ' 23:59:59');
-        }
-
-        $evaluations = $builder->orderBy('final_score', 'DESC')->findAll();
+        // Gunakan query yang sama dengan index()
+        $evaluations = $evaluationModel->getEvaluationWithTeachers(
+            $activePeriodId,
+            $latestAhp['ahp_result_id'],
+            $startDate,
+            $endDate
+        );
 
         // Inisialisasi Dompdf
         $dompdf = new \Dompdf\Dompdf();
