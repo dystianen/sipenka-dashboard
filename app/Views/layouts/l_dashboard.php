@@ -79,9 +79,6 @@
         <img src="<?php echo base_url(); ?>/assets/img/logo.png" width="40" height="50" />
         <h4 class="ms-1 font-weight-bolder">SDS Mustika<span style="color: #A0937D">.</span></h4>
       </div>
-      <!-- <a class="navbar-brand m-0 d-flex gap-2" href="<?= base_url('dashboard') ?>" target="_blank">
-        <h5 class="ms-1 font-weight-bolder" style="font-size: 28px;">SIPENKA<span style="color: #A0937D">.</span></h5>
-      </a> -->
     </div>
     <hr class="horizontal dark mt-0">
 
