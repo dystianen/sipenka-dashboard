@@ -3,7 +3,10 @@
 <div class="d-flex justify-content-center align-items-center" style="height: 80vh">
   <div class="card shadow-lg">
     <div class="card-body">
-      <h1 class="ms-1 font-weight-bolder">SIPENKA<span style="color: #A0937D">.</span></h1>
+      <div class="d-flex flex-column align-items-center justify-content-center">
+        <img src="<?php echo base_url(); ?>/assets/img/logo.png" width="100" height="150" />
+        <h1 class="ms-1 font-weight-bolder">SDS Mustika<span style="color: #A0937D">.</span></h1>
+      </div>
 
       <p class="auth-subtitle mb-5">Log in with your data that the admin entered.</p>
 
