@@ -23,11 +23,14 @@ class DashboardController extends BaseController
         $jumlahGuru = $this->teacherModel->countAllResults();
 
         // Rata-rata nilai
-        $avgScore = $this->evaluationModel
+        $avgScoreRow = $this->evaluationModel
             ->selectAvg('normalized_score', 'avg_score')
             ->first();
+        $avgScore = $avgScoreRow && $avgScoreRow['avg_score'] !== null
+            ? round($avgScoreRow['avg_score'], 2)
+            : 0;
 
-        // Ranking tertinggi (ambil yang rank = 1)
+        // Ranking tertinggi
         $topRank = $this->evaluationModel
             ->select('evaluation_results.*, users.name as teacher_name')
             ->join('teachers', 'teachers.teacher_id = evaluation_results.teacher_id')
@@ -37,8 +40,8 @@ class DashboardController extends BaseController
 
         $data = [
             'jumlahGuru' => $jumlahGuru,
-            'avgScore'   => round($avgScore['avg_score'] ?? 0, 2),
-            'topRank'    => $topRank
+            'avgScore'   => $avgScore,
+            'topRank'    => $topRank // bisa null kalau belum ada data
         ];
 
         return view('v_dashboard', $data);

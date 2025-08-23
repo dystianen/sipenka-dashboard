@@ -54,7 +54,9 @@
         <div class="card-body text-center">
           <i class="bi bi-award display-4 text-success"></i>
           <h5 class="mt-3">Rata-rata Nilai</h5>
-          <h3 class="fw-bold"><?= $avgScore ?></h3>
+          <h3 class="fw-bold">
+            <?= $avgScore > 0 ? $avgScore : '<span class="text-muted">Belum ada data</span>' ?>
+          </h3>
         </div>
       </div>
     </div>
@@ -69,11 +71,12 @@
             <p class="mb-0">Skor: <?= $topRank['normalized_score'] ?></p>
             <span class="badge bg-primary"><?= $topRank['category'] ?></span>
           <?php else: ?>
-            <p class="text-muted">Belum ada data</p>
+            <p class="text-muted">Belum ada data evaluasi</p>
           <?php endif; ?>
         </div>
       </div>
     </div>
+
   </div>
 
   <!-- Tambahan Section -->
