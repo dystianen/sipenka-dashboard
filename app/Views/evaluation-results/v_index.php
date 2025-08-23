@@ -43,7 +43,7 @@
               // tentukan warna sesuai kategori
               $colorClass = match ($e['category']) {
                 'Amat Baik (AB)' => 'text-success fw-bold',
-                'Baik (B)'       => 'text-primary fw-bold',
+                'Baik (B)'       => 'text-muted fw-bold',
                 'Cukup (C)'      => 'text-warning fw-bold',
                 default          => 'text-danger fw-bold', // Kurang (K)
               };

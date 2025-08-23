@@ -30,7 +30,7 @@
         <?php
         $color = match ($e['category']) {
           'Amat Baik (AB)' => 'green',
-          'Baik (B)'       => 'blue',
+          'Baik (B)'       => '#67748e',
           'Cukup (C)'      => 'orange',
           default          => 'red',
         };
