@@ -27,12 +27,20 @@
     </thead>
     <tbody>
       <?php foreach ($evaluations as $e): ?>
+        <?php
+        $color = match ($e['category']) {
+          'Amat Baik (AB)' => 'green',
+          'Baik (B)'       => 'blue',
+          'Cukup (C)'      => 'orange',
+          default          => 'red',
+        };
+        ?>
         <tr>
           <td><?= esc($e['rank']) ?></td>
           <td><?= esc($e['teacher_name']) ?></td>
-          <td class="text-warning"><?= esc($e['normalized_score']) ?></td>
-          <td class="text-warning"><?= esc($e['category']) ?></td>
-          <td class="text-warning"><?= esc(number_format($e['final_score'], 4)) ?></td>
+          <td style="color: <?= $color ?>;"><?= esc($e['normalized_score']) ?></td>
+          <td style="color: <?= $color ?>;"><?= esc($e['category']) ?></td>
+          <td style="color: <?= $color ?>;"><?= esc(number_format($e['final_score'], 4)) ?></td>
         </tr>
       <?php endforeach; ?>
     </tbody>

@@ -39,12 +39,21 @@
             </tr>
           <?php else: ?>
             <?php foreach ($evaluations as $e): ?>
+              <?php
+              // tentukan warna sesuai kategori
+              $colorClass = match ($e['category']) {
+                'Amat Baik (AB)' => 'text-success fw-bold',
+                'Baik (B)'       => 'text-primary fw-bold',
+                'Cukup (C)'      => 'text-warning fw-bold',
+                default          => 'text-danger fw-bold', // Kurang (K)
+              };
+              ?>
               <tr>
                 <td><?= esc($e['rank']) ?></td>
                 <td><?= esc($e['teacher_name']) ?></td>
-                <td class="text-warning"><?= esc($e['normalized_score']) ?></td>
-                <td class="text-warning"><?= esc($e['category']) ?></td>
-                <td class="text-warning"><?= esc(number_format($e['final_score'], 4)) ?></td>
+                <td class="<?= $colorClass ?>"><?= esc($e['normalized_score']) ?></td>
+                <td class="<?= $colorClass ?>"><?= esc($e['category']) ?></td>
+                <td class="<?= $colorClass ?>"><?= esc(number_format($e['final_score'], 4)) ?></td>
               </tr>
             <?php endforeach; ?>
           <?php endif; ?>
