@@ -179,9 +179,32 @@ class AhpResultsController extends BaseController
 
         $activePeriodId = $period['period_id'];
 
+        // 🔹 Cek apakah sudah ada hasil AHP di periode aktif
+        $existingResults = $this->ahpResultModel
+            ->where('period_id', $activePeriodId)
+            ->findAll();
+
+        if ($existingResults) {
+            foreach ($existingResults as $row) {
+                $resultId = $row['ahp_result_id'];
+
+                // Hapus tabel relasi (child) dulu
+                $this->ahpNormalizationModel->where('ahp_result_id', $resultId)->delete();
+                $this->ahpWeightModel->where('ahp_result_id', $resultId)->delete();
+
+                // Baru hapus parent
+                $this->ahpResultModel->delete($resultId);
+            }
+        }
+
+        // 🔹 Ambil kategori
         $categories = $this->categoryModel->findAll();
         $categoryIds = array_column($categories, 'category_id');
         $n = count($categoryIds);
+
+        if ($n == 0) {
+            throw new \Exception("Kategori tidak ditemukan.");
+        }
 
         // Inisialisasi matriks pairwise
         $matrix = array_fill(0, $n, array_fill(0, $n, 1.0));
@@ -243,7 +266,7 @@ class AhpResultsController extends BaseController
         $RI = $this->getRandomIndex($n);
         $CR = ($RI == 0) ? 0 : $CI / $RI;
 
-        // Simpan ke ahp_results
+        // 🔹 Simpan ke ahp_results (baru)
         $this->ahpResultModel->insert([
             'period_id'          => $activePeriodId,
             'weights'            => json_encode($weights),
@@ -257,7 +280,7 @@ class AhpResultsController extends BaseController
 
         $resultId = $this->ahpResultModel->getInsertID();
 
-        // Simpan hasil normalisasi matriks
+        // 🔹 Simpan hasil normalisasi matriks
         foreach ($normalized as $i => $row) {
             foreach ($row as $j => $val) {
                 $this->ahpNormalizationModel->insert([
@@ -269,7 +292,7 @@ class AhpResultsController extends BaseController
             }
         }
 
-        // Simpan bobot eigen vector
+        // 🔹 Simpan bobot eigen vector
         foreach ($weights as $criteriaId => $val) {
             $this->ahpWeightModel->insert([
                 'ahp_result_id' => $resultId,
@@ -278,9 +301,12 @@ class AhpResultsController extends BaseController
             ]);
         }
 
+        // 🔹 Generate hasil evaluasi guru
         $this->generateEvaluationResults();
-        return redirect()->to('/ahp');
+
+        return redirect()->to('/ahp')->with('success', 'Perhitungan AHP berhasil diperbarui untuk periode aktif.');
     }
+
 
 
     public function result()
