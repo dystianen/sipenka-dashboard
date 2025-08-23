@@ -28,8 +28,17 @@ class CreateAhpResultsTable extends Migration
             'weights' => [
                 'type' => 'JSON'
             ],
-            'cr_value' => [
-                'type' => 'FLOAT'
+            'lambda_max' => [
+                'type' => 'DOUBLE',
+                'null' => true
+            ],
+            'ci' => [
+                'type' => 'DOUBLE',
+                'null' => true
+            ],
+            'consistency_ratio' => [
+                'type' => 'DOUBLE',
+                'null' => true
             ],
             'is_valid' => [
                 'type' => 'BOOLEAN'

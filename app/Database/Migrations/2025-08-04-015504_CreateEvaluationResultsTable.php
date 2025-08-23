@@ -37,6 +37,13 @@ class CreateEvaluationResultsTable extends Migration
             'final_score' => [
                 'type' => 'FLOAT'
             ],
+            'normalized_score' => [
+                'type' => 'FLOAT'
+            ],
+            'category' => [
+                'type' => 'VARCHAR',
+                'constraint' => 50
+            ],
             'created_at' => [
                 'type' => 'DATETIME',
                 'null' => true,

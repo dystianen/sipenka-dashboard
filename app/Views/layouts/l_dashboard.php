@@ -173,6 +173,15 @@
               <span class="nav-link-text ms-1">Performance Assesment</span>
             </a>
           </li>
+
+          <li class="nav-item">
+            <a class="nav-link <?= $currentURI === 'ahp' ? 'active' : '' ?>" href="/ahp">
+              <div class="me-2 d-flex align-items-center justify-content-center">
+                <i class="fas fa-user-cog"></i>
+              </div>
+              <span class="nav-link-text ms-1">AHP</span>
+            </a>
+          </li>
         <?php endif; ?>
 
         <!-- Menu Umum -->

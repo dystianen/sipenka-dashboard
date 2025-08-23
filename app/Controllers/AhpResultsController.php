@@ -3,7 +3,9 @@
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
+use App\Models\AHPNormalizationModel;
 use App\Models\AhpResultModel;
+use App\Models\AHPWeightModel;
 use App\Models\CriteriaModel;
 use App\Models\EvaluationResultModel;
 use App\Models\PairwiseComparisonModel;
@@ -13,11 +15,13 @@ use App\Models\TeacherQuestionScoreModel;
 
 class AhpResultsController extends BaseController
 {
-    protected $ahpResultModel, $teacherScoreModel, $evaluationModel, $periodModel, $teacherModel, $categoryModel, $comparisonModel;
+    protected $ahpResultModel, $ahpNormalizationModel, $ahpWeightModel, $teacherScoreModel, $evaluationModel, $periodModel, $teacherModel, $categoryModel, $comparisonModel;
 
     public function __construct()
     {
         $this->ahpResultModel = new AhpResultModel();
+        $this->ahpNormalizationModel = new AHPNormalizationModel();
+        $this->ahpWeightModel = new AHPWeightModel();
         $this->teacherScoreModel = new TeacherQuestionScoreModel();
         $this->evaluationModel = new EvaluationResultModel();
         $this->periodModel = new PeriodModel();
@@ -43,6 +47,21 @@ class AhpResultsController extends BaseController
         return $riTable[$n] ?? 1.5;
     }
 
+    private function getGradeCategory($score, $maxScore)
+    {
+        $percentage = ($score / $maxScore) * 100;
+
+        if ($percentage >= 90) {
+            return 'Amat Baik (AB)';
+        } elseif ($percentage >= 80) {
+            return 'Baik (B)';
+        } elseif ($percentage >= 70) {
+            return 'Cukup (C)';
+        } else {
+            return 'Kurang (K)';
+        }
+    }
+
     public function generateEvaluationResults()
     {
         // Ambil periode aktif
@@ -59,11 +78,19 @@ class AhpResultsController extends BaseController
             ->first();
 
         if (!$ahpResult) {
-            return redirect()->back()->with('error', 'Belum ada hasil AHP.');
+            return redirect()->back()->with('error', 'Belum ada hasil AHP untuk periode ini.');
         }
 
         $weights = json_decode($ahpResult['weights'], true);
+        if (!$weights || empty($weights)) {
+            return redirect()->back()->with('error', 'Bobot AHP tidak ditemukan atau kosong.');
+        }
+
         $teachers = $this->teacherModel->findAll();
+        if (!$teachers) {
+            return redirect()->back()->with('error', 'Tidak ada data guru yang ditemukan.');
+        }
+
         $results = [];
 
         foreach ($teachers as $teacher) {
@@ -82,20 +109,46 @@ class AhpResultsController extends BaseController
 
             foreach ($scores as $s) {
                 $categoryId = $s['category_id'];
-                $avgScore = floatval($s['avg_score']);
-                $weight = $weights[$categoryId] ?? 0;
+                $avgScore   = floatval($s['avg_score']);
+                $weight     = $weights[$categoryId] ?? 0;
+
                 $finalScore += $avgScore * $weight;
             }
 
             $results[] = [
                 'teacher_id'    => $teacherId,
                 'final_score'   => $finalScore,
+                'category'      => $finalScore,
                 'ahp_result_id' => $ahpResult['ahp_result_id'],
                 'period_id'     => $periodId
             ];
         }
 
-        // Urutkan dan beri ranking
+        // Setelah foreach hitung $results selesai, cari nilai max
+        $maxScore = max(array_column($results, 'final_score'));
+
+        foreach ($results as &$r) {
+            // Normalisasi ke skala 100
+            $normalized = $maxScore > 0 ? ($r['final_score'] / $maxScore) * 100 : 0;
+            $r['normalized_score'] = round($normalized, 2);
+
+            // Tentukan kategori
+            if ($normalized > 90 && $normalized <= 100) {
+                $category = 'Amat Baik (AB)';
+            } elseif ($normalized > 80) {
+                $category = 'Baik (B)';
+            } elseif ($normalized > 70) {
+                $category = 'Cukup (C)';
+            } else {
+                $category = 'Kurang (K)';
+            }
+
+            $r['category'] = $category;
+        }
+        unset($r);
+
+
+        // Urutkan & beri ranking
         usort($results, fn($a, $b) => $b['final_score'] <=> $a['final_score']);
         $rank = 1;
         foreach ($results as &$r) {
@@ -103,30 +156,26 @@ class AhpResultsController extends BaseController
         }
         unset($r);
 
-        // Hapus hasil sebelumnya untuk periode ini
+        // Hapus hasil lama untuk periode ini
         $this->evaluationModel->where('period_id', $periodId)->delete();
 
-        // Simpan hasil baru
-        foreach ($results as $r) {
-            $this->evaluationModel->insert([
-                'teacher_id'    => $r['teacher_id'],
-                'ahp_result_id' => $r['ahp_result_id'],
-                'period_id'     => $r['period_id'],
-                'final_score'   => $r['final_score'],
-                'rank'          => $r['rank']
-            ]);
-        }
+        // Simpan hasil baru (batch insert)
+        $this->evaluationModel->insertBatch($results);
 
-        return redirect()->to('/evaluation-results')->with('success', 'Hasil evaluasi berhasil disimpan.');
+        return $results;
     }
-
 
 
     public function calculateAHP()
     {
+        // Ambil periode aktif
         $period = $this->periodModel
             ->where('is_active', 1)
             ->first();
+
+        if (!$period) {
+            throw new \Exception("Tidak ada periode aktif.");
+        }
 
         $activePeriodId = $period['period_id'];
 
@@ -141,7 +190,9 @@ class AhpResultsController extends BaseController
         $categoryIndexMap = array_flip($categoryIds);
 
         // Ambil data pairwise dari DB
-        $comparisons = $this->comparisonModel->where('period_id', $activePeriodId)->findAll();
+        $comparisons = $this->comparisonModel
+            ->where('period_id', $activePeriodId)
+            ->findAll();
 
         // Isi matriks berdasarkan data
         foreach ($comparisons as $row) {
@@ -194,14 +245,99 @@ class AhpResultsController extends BaseController
 
         // Simpan ke ahp_results
         $this->ahpResultModel->insert([
-            'period_id'    => $activePeriodId,
-            'weights'      => json_encode($weights),
-            'calculated_by' => session()->get('user_id') ?? 1,
-            'is_valid'     => $CR < 0.1, // valid jika CR < 0.1
-            'consistency_ratio' => $CR,
-            'created_at'   => date('Y-m-d H:i:s')
+            'period_id'          => $activePeriodId,
+            'weights'            => json_encode($weights),
+            'calculated_by'      => session()->get('user_id') ?? 1,
+            'is_valid'           => $CR < 0.1,
+            'lambda_max'         => $lambdaMax,
+            'ci'                 => $CI,
+            'consistency_ratio'  => $CR,
+            'created_at'         => date('Y-m-d H:i:s')
         ]);
 
-        return $this->generateEvaluationResults();
+        $resultId = $this->ahpResultModel->getInsertID();
+
+        // Simpan hasil normalisasi matriks
+        foreach ($normalized as $i => $row) {
+            foreach ($row as $j => $val) {
+                $this->ahpNormalizationModel->insert([
+                    'ahp_result_id'   => $resultId,
+                    'criteria_id_row' => $categoryIds[$i],
+                    'criteria_id_col' => $categoryIds[$j],
+                    'normalized_value' => $val
+                ]);
+            }
+        }
+
+        // Simpan bobot eigen vector
+        foreach ($weights as $criteriaId => $val) {
+            $this->ahpWeightModel->insert([
+                'ahp_result_id' => $resultId,
+                'criteria_id'   => $criteriaId,
+                'weight'        => $val
+            ]);
+        }
+
+        $this->generateEvaluationResults();
+        return redirect()->to('/ahp');
+    }
+
+
+    public function result()
+    {
+        // Ambil periode aktif
+        $activePeriod = $this->periodModel
+            ->where('is_active', 1)
+            ->first();
+
+        if (!$activePeriod) {
+            return redirect()->back()->with('error', 'Tidak ada periode aktif.');
+        }
+
+        // Ambil hasil AHP berdasarkan periode aktif
+        $result = $this->ahpResultModel
+            ->where('period_id', $activePeriod['period_id'])
+            ->first();
+
+        if (!$result) {
+            return view('ahp/v_result', [
+                'categories'       => [],
+                'categoryMap'      => [],
+                'normalizedMatrix' => [],
+                'weights'          => [],
+                'result'           => null,
+                'activePeriod'     => $activePeriod
+            ]);
+        }
+
+        // Ambil data kriteria
+        $categories = $this->categoryModel->findAll();
+        $categoryMap = array_column($categories, 'name', 'category_id');
+
+        // Ambil normalisasi matriks
+        $normalizations = $this->ahpNormalizationModel
+            ->where('ahp_result_id', $result['ahp_result_id'])
+            ->findAll();
+
+        $normalizedMatrix = [];
+        foreach ($normalizations as $n) {
+            $normalizedMatrix[$n['criteria_id_row']][$n['criteria_id_col']] = $n['normalized_value'];
+        }
+
+        // Ambil bobot eigen vector
+        $weights = $this->ahpWeightModel
+            ->where('ahp_result_id', $result['ahp_result_id'])
+            ->findAll();
+
+        $data = [
+            'categories'       => $categories,
+            'categoryMap'      => $categoryMap,
+            'normalizedMatrix' => $normalizedMatrix,
+            'weights'          => $weights,
+            'result'           => $result,
+            'activePeriod'     => $activePeriod
+        ];
+
+        return view('ahp/v_result', $data);
     }
 }

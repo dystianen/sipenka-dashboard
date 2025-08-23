@@ -12,7 +12,18 @@ class EvaluationResultModel extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = true;
     protected $protectFields    = true;
-    protected $allowedFields    = ['teacher_id', 'ahp_result_id', 'period_id', 'rank', 'final_score', 'created_at', 'updated_at', 'deleted_at'];
+    protected $allowedFields    = [
+        'teacher_id',
+        'ahp_result_id',
+        'period_id',
+        'rank',
+        'final_score',
+        'normalized_score',
+        'category',
+        'created_at',
+        'updated_at',
+        'deleted_at'
+    ];
 
     protected bool $allowEmptyInserts = false;
 

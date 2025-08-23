@@ -20,6 +20,8 @@
       <tr bgcolor=silver align=center>
         <th>Ranking</th>
         <th>Nama Guru</th>
+        <th>Normalized Score</th>
+        <th>Category</th>
         <th>Final Score</th>
       </tr>
     </thead>
@@ -28,7 +30,9 @@
         <tr>
           <td><?= esc($e['rank']) ?></td>
           <td><?= esc($e['teacher_name']) ?></td>
-          <td><?= esc(number_format($e['final_score'], 4)) ?></td>
+          <td class="text-warning"><?= esc($e['normalized_score']) ?></td>
+          <td class="text-warning"><?= esc($e['category']) ?></td>
+          <td class="text-warning"><?= esc(number_format($e['final_score'], 4)) ?></td>
         </tr>
       <?php endforeach; ?>
     </tbody>

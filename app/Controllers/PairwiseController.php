@@ -22,6 +22,30 @@ class PairwiseController extends BaseController
         $criteria = $this->criteriaModel->findAll();
         $periods = $this->periodModel->findAll();
 
+        // Ambil period_id dari query (GET)
+        $selectedPeriodId = $this->request->getGet('period_id');
+
+        // kalau kosong, fallback ke periode aktif
+        if (!$selectedPeriodId) {
+            $activePeriod = $this->periodModel->where('is_active', 1)->first();
+            $selectedPeriodId = $activePeriod ? $activePeriod['period_id'] : null;
+        }
+
+        $comparisonModel = new PairwiseComparisonModel();
+        $savedComparisons = [];
+        if ($selectedPeriodId) {
+            $savedComparisons = $comparisonModel
+                ->where('period_id', $selectedPeriodId)
+                ->findAll();
+        }
+
+        // mapping [c1-c2] => value
+        $comparisonMap = [];
+        foreach ($savedComparisons as $row) {
+            $comparisonMap[$row['criteria_id_1'] . '-' . $row['criteria_id_2']] = $row['comparison_value'];
+        }
+
+        // generate pasangan kriteria
         $pairs = [];
         for ($i = 0; $i < count($criteria); $i++) {
             for ($j = $i + 1; $j < count($criteria); $j++) {
@@ -30,17 +54,18 @@ class PairwiseController extends BaseController
                     'criteria1_name' => $criteria[$i]['name'],
                     'criteria2_id' => $criteria[$j]['category_id'],
                     'criteria2_name' => $criteria[$j]['name'],
+                    'selected_value' => $comparisonMap[$criteria[$i]['category_id'] . '-' . $criteria[$j]['category_id']] ?? null
                 ];
             }
         }
 
-        $data = [
+        return view('pairwise-comparison/v_index', [
             'pairs' => $pairs,
-            'periods' => $periods
-        ];
-
-        return view('pairwise-comparison/v_index', $data);
+            'periods' => $periods,
+            'selectedPeriodId' => $selectedPeriodId
+        ]);
     }
+
 
     public function save()
     {
@@ -53,27 +78,32 @@ class PairwiseController extends BaseController
             return redirect()->back()->with('error', 'Data tidak lengkap.');
         }
 
-        $period = $this->periodModel
-            ->where('is_active', 1)
-            ->first();
-        $activePeriodId = $period['period_id'];
+        // Validasi periode
+        $period = $this->periodModel->find($period_id);
+        if (!$period) {
+            return redirect()->back()->with('error', 'Periode tidak ditemukan.');
+        }
 
-        // dd($period_id, $comparisons);
+        // hapus data lama agar tidak double
+        $model->where('period_id', $period_id)->delete();
+
+        // simpan ulang data pairwise
         foreach ($comparisons as $item) {
-            $value = is_numeric($item['value']) ? floatval($item['value']) : eval("return " . $item['value'] . ";");
+            $value = is_numeric($item['value'])
+                ? floatval($item['value'])
+                : eval("return " . $item['value'] . ";");
 
             $data = [
-                'period_id'        => $activePeriodId,
+                'period_id'        => $period_id,
                 'criteria_id_1'    => $item['criteria1_id'],
                 'criteria_id_2'    => $item['criteria2_id'],
                 'comparison_value' => $value,
                 'created_by'       => session()->get('user_id') ?? 1,
             ];
-            // dd($data);
-
             $model->insert($data);
         }
 
-        return redirect()->to('/pairwise-comparison')->with('success', 'Data pairwise berhasil disimpan.');
+        return redirect()->to('/pairwise-comparison?period_id=' . $period_id)
+            ->with('success', 'Data pairwise berhasil disimpan.');
     }
 }

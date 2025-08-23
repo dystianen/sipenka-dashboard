@@ -12,7 +12,7 @@ class AhpResultModel extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = true;
     protected $protectFields    = true;
-    protected $allowedFields    = ['period_id', 'calculated_by', 'weights', 'cr_value', 'is_valid', 'created_at', 'updated_at', 'deleted_at'];
+    protected $allowedFields    = ['period_id', 'calculated_by', 'weights', 'lambda_max', 'ci', 'consistency_ratio', 'is_valid', 'created_at', 'updated_at', 'deleted_at'];
 
     protected bool $allowEmptyInserts = false;
 
