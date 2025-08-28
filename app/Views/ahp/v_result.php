@@ -10,26 +10,29 @@
     <?php if (empty($categories) || empty($normalizedMatrix)): ?>
       <p class="text-center text-muted">No data available</p>
     <?php else: ?>
-      <table class="table table-bordered text-center">
-        <thead class="table-light">
-          <tr>
-            <th>Kriteria</th>
-            <?php foreach ($categories as $c): ?>
-              <th><?= esc($c['name']) ?></th>
-            <?php endforeach; ?>
-          </tr>
-        </thead>
-        <tbody>
-          <?php foreach ($categories as $row): ?>
+      <div class="table-responsive">
+        <table class="table table-bordered text-center">
+          <thead class="table-light">
             <tr>
-              <td><b><?= esc($row['name']) ?></b></td>
-              <?php foreach ($categories as $col): ?>
-                <td><?= number_format($normalizedMatrix[$row['category_id']][$col['category_id']] ?? 0, 3) ?></td>
+              <th>Kriteria</th>
+              <?php foreach ($categories as $c): ?>
+                <th><?= esc($c['name']) ?></th>
               <?php endforeach; ?>
             </tr>
-          <?php endforeach; ?>
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            <?php foreach ($categories as $row): ?>
+              <tr>
+                <td><b><?= esc($row['name']) ?></b></td>
+                <?php foreach ($categories as $col): ?>
+                  <td><?= number_format($normalizedMatrix[$row['category_id']][$col['category_id']] ?? 0, 3) ?></td>
+                <?php endforeach; ?>
+              </tr>
+            <?php endforeach; ?>
+          </tbody>
+        </table>
+      </div>
+
     <?php endif; ?>
   </div>
 </div>
@@ -41,22 +44,24 @@
     <?php if (empty($weights)): ?>
       <p class="text-center text-muted">No data available</p>
     <?php else: ?>
-      <table class="table table-bordered text-center">
-        <thead class="table-light">
-          <tr>
-            <th>Kriteria</th>
-            <th>Eigen Vector</th>
-          </tr>
-        </thead>
-        <tbody>
-          <?php foreach ($weights as $w): ?>
+      <div class="table-responsive">
+        <table class="table table-bordered text-center">
+          <thead class="table-light">
             <tr>
-              <td><?= esc($categoryMap[$w['criteria_id']] ?? '-') ?></td>
-              <td><?= number_format($w['weight'], 3) ?></td>
+              <th>Kriteria</th>
+              <th>Eigen Vector</th>
             </tr>
-          <?php endforeach; ?>
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            <?php foreach ($weights as $w): ?>
+              <tr>
+                <td><?= esc($categoryMap[$w['criteria_id']] ?? '-') ?></td>
+                <td><?= number_format($w['weight'], 3) ?></td>
+              </tr>
+            <?php endforeach; ?>
+          </tbody>
+        </table>
+      </div>
     <?php endif; ?>
   </div>
 </div>
